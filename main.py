@@ -1,3 +1,5 @@
-import custom
+import custom as c
 
-led = custom.Custom()
+
+led = c.Custom().led(25)
+led.on()
