@@ -1,9 +1,15 @@
 import machine
 
-class Custom(machine):  # type: ignore
+class Led(machine.Pin):  # type: ignore
 
-    def __init__(self):
-        print("Custom class initialized")
+    def __init__(self, port):
+        self.led = machine.Pin(port, machine.Pin.OUT)
     
-    def led(self, port):
-        return machine.Pin(port, machine.Pin.OUT)
+    def on(self):
+        self.led.value(1)
+    
+    def off(self):
+        self.led.value(0)
+    
+    def toggle(self):
+        self.led.toggle()
