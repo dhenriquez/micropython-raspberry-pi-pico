@@ -11,7 +11,7 @@ oled = SSD1306_I2C(72, 40, i2c)
 # Title Screen
 oled.fill(0)
 
-oled.text('"Daniel"', 0, 0, 1)
+oled.text('"Daniel0"', 0, 0, 1)
 oled.show()
 #utime.sleep(5)
 
