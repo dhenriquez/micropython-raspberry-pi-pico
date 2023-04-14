@@ -1,3 +1,9 @@
+# This file is executed on every boot (including wake-boot from deepsleep)
+#import esp
+#esp.osdebug(None)
+#import webrepl
+#webrepl.start()
+
 from machine import Pin, I2C
 import time
 from ssd1306 import SSD1306_I2C
