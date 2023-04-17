@@ -4,6 +4,9 @@
 #import webrepl
 #webrepl.start()
 
+# Investigar
+# https://github.com/micropython/micropython/tree/master/examples/bluetooth
+
 from machine import Pin, I2C
 import time
 from ssd1306 import SSD1306_I2C
