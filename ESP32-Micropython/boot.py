@@ -8,8 +8,14 @@
 # https://github.com/micropython/micropython/tree/master/examples/bluetooth
 
 from machine import Pin, I2C
-import time
+import time, dht
 from ssd1306 import SSD1306_I2C
+
+sensor_data = dht.DHT11(Pin(15))
+print(sensor_data)
+#sensor_data.measure()
+
+print(sensor_data.temperature())
 
 # Init Display
 # scl and sda can be any pin on i2c bus 1
