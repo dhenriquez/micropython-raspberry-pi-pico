@@ -83,6 +83,8 @@ class PN532:
         response = self._read_data(length + 30) 
         self.cs.value(1)
         
+        print(f"[DEBUG] Raw: {[hex(x) for x in response]}")
+        
         try:
             # Buscamos el preambulo 0xFF (Start Code parte 2)
             start_idx = response.index(b'\xff')
