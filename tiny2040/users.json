@@ -1,0 +1,14 @@
+[
+  {
+    "user": "Mickey Mouse",
+    "uid": "0x04484afa471190",
+    "usertype": "vip",
+    "status": "habilitado"
+  },
+  {
+    "user": "Donald Duck",
+    "uid": "0x080ffcb7",
+    "usertype": "normal",
+    "status": "denegado"
+  }
+]
