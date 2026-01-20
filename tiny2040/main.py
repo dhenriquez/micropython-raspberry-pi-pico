@@ -143,7 +143,7 @@ def main():
         uid = None
         if nfc: 
             try:
-                uid = nfc.read_uid(timeout=50) 
+                uid = nfc.read_passive_target(timeout=50) 
             except Exception:
                 pass 
 
