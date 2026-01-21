@@ -156,6 +156,7 @@ def main():
             while time.ticks_diff(time.ticks_ms(), inicio_proc) < 1000:
                 anim_procesando_cometa()
             
+            cargar_usuarios()
             usuario_encontrado = None
             for u in usuarios:
                 if u['uid'].lower() == uid_str.lower():
