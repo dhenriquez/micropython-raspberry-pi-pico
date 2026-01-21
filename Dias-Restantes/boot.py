@@ -1805,14 +1805,26 @@ class DNSServer:
             transaction_id = data[0:2]
             
             packet = transaction_id + b'\x81\x80\x00\x01\x00\x01\x00\x00\x00\x00'
-            packet += data[12:]
-            packet += b'\xc0\x0c'
-            packet += b'\x00\x01'
-            packet += b'\x00\x01'
-            packet += b'\x00\x00\x00\x3c'
-            packet += b'\x00\x04'
             
-            # Conversión manual de IP a bytes
+            # 1. Copiar la Pregunta (Question Section) saneada
+            # Buscar el fin de la sección de pregunta (marcada por un byte 0x00)
+            fin_pregunta = data.find(b'\x00', 12)
+            if fin_pregunta > 0:
+                # Copiar hasta el fin del nombre + 4 bytes (Tipo y Clase)
+                packet += data[12:fin_pregunta + 5]
+            else:
+                # Fallback por si acaso
+                packet += data[12:]
+
+            # 2. Agregar la Cabecera de la Respuesta (Answer Section Header)
+            # C0 0C = Puntero al nombre en el offset 12 (comienzo de la pregunta)
+            packet += b'\xc0\x0c'
+            packet += b'\x00\x01' # TYPE A
+            packet += b'\x00\x01' # CLASS IN
+            packet += b'\x00\x00\x00\x3c' # TTL 60s
+            packet += b'\x00\x04' # RDLENGTH 4 bytes
+            
+            # 3. Agregar la IP (RDATA)
             packet += bytes(map(int, self.ip_address.split('.')))
 
             self.socket.sendto(packet, addr)
@@ -1827,24 +1839,35 @@ def main():
     
     print("Iniciando ESP32 Contador de Días...")
     
-    init_lcd()
+    # Intento robusto de inicializar pantalla
+    try:
+        init_lcd()
+    except Exception as e:
+        print("Advertencia: No se pudo iniciar LCD, continuando sin pantalla. Error: {}".format(e))
+
     cargar_configuracion_json()
     
     ap_ip = '192.168.4.1'
     dns_server = None
 
-    # CREAR SIEMPRE EL ACCESS POINT (NUEVO)
-    crear_access_point()
-    ap_ip = network.WLAN(network.AP_IF).ifconfig()[0]
-    dns_server = DNSServer(ap_ip)
-    print("Servidor DNS iniciado en {}".format(ap_ip))
+    try:
+        # CREAR SIEMPRE EL ACCESS POINT (NUEVO)
+        crear_access_point()
+        ap_ip = network.WLAN(network.AP_IF).ifconfig()[0]
+        dns_server = DNSServer(ap_ip)
+        print("Servidor DNS iniciado en {}".format(ap_ip))
+    except Exception as e:
+        print("Error crítico iniciando Red/DNS: {}".format(e))
+        # Intentar seguir aunque falle DNS
 
     # Intentar conectar WiFi guardado
     if ssid_guardado:
         if oled:
-            oled.fill(0)
-            oled.text('Conectando WiFi', 0, 0, 1)
-            oled.show()
+            try:
+                oled.fill(0)
+                oled.text('Conectando WiFi', 0, 0, 1)
+                oled.show()
+            except: pass
         
         if conectar_wifi(ssid_guardado, password_guardado):
             wifi_configurado = True
@@ -1856,8 +1879,8 @@ def main():
     if fecha_objetivo:
         configurar_fecha_destino(fecha_objetivo)
     
-    # Resto del código sin cambios...
-    last_update = 0
+    # Resto del código...
+    last_update = time.time()
     
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     web_socket = socket.socket()
@@ -1866,12 +1889,15 @@ def main():
     web_socket.listen(1)
     web_socket.setblocking(False)
 
-    print("Servidor web iniciado en modo no bloqueante.")
+    print("Servidor web iniciado en modo no bloqueante en http://{}/".format(ap_ip))
     
     try:
         while True:
             if dns_server:
-                dns_server.handle_request()
+                try:
+                    dns_server.handle_request()
+                except Exception as e:
+                    print("Error en loop DNS: {}".format(e))
 
             try:
                 client, addr = web_socket.accept()
@@ -1882,14 +1908,21 @@ def main():
                 if e.errno != 11:
                     print("Error aceptando cliente: {}".format(e))
                 pass
+            except Exception as e:
+                print("Error genérico en web server: {}".format(e))
             
-            # AQUÍ ES DONDE CAMBIAR LA FUNCIÓN
+            # Actualizar pantalla periódicamente
             if time.time() - last_update >= 1:
-                actualizar_pantalla_simple()  # ← ELEGIR UNA DE LAS 3 FUNCIONES
+                try:
+                    actualizar_pantalla_simple()
+                except Exception as e:
+                    print("Error actualizando pantalla: {}".format(e))
                 last_update = time.time()
             
             if modo_display not in ["numeros_grandes", "solo_numero"]:
-                actualizar_scroll()
+                try:
+                    actualizar_scroll()
+                except: pass
             
             time.sleep_ms(50)
                 
@@ -1900,6 +1933,14 @@ def main():
         if dns_server:
             dns_server.socket.close()
 
-# Llamar a main al final
+# Llamar a main al final con captura de errores global
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        # Si todo falla, escribir el error en un archivo para que el usuario pueda leerlo
+        print("CRASH CRITICO: {}".format(e))
+        with open("crash_log.txt", "w") as f:
+            f.write("Error fatal: {}\n".format(e))
+            import sys
+            sys.print_exception(e, f)
