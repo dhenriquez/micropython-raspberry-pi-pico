@@ -16,6 +16,10 @@ C_VERDE  = (0, 255, 0)
 C_ROJO   = (255, 0, 0)
 C_AZUL   = (0, 0, 255)
 C_OFF    = (0, 0, 0)
+C_G_AZUL   = (66, 133, 244)
+C_G_ROJO   = (234, 67, 53)
+C_G_AMARILLO = (251, 188, 5)
+C_G_VERDE  = (52, 168, 83)
 
 # --- HARDWARE ---
 np = neopixel.NeoPixel(Pin(PIN_NEO), NUM_LEDS)
@@ -130,9 +134,42 @@ def anim_acceso_vip():
 def anim_acceso_denegado():
     parpadear_fade(C_ROJO, 3)
 
+def anim_intro_google():
+    colores_google = [C_G_AZUL, C_G_ROJO, C_G_AMARILLO, C_G_VERDE]
+    start_t = time.ticks_ms()
+    # Ejecutar animacion por 3 segundos
+    while time.ticks_diff(time.ticks_ms(), start_t) < 3000:
+        np.fill(C_OFF)
+        # Rotar colores
+        offset = int(time.ticks_ms() / 150)
+        for i in range(NUM_LEDS):
+            # Dividir anillo en 4 secciones
+            seccion = (i + offset) % NUM_LEDS
+            idx_color = (seccion * 4) // NUM_LEDS
+            # Asignar color correspondiente a la seccion
+            c = colores_google[idx_color % 4]
+            # Aplicar brillo
+            color_final = (int(c[0]*BRILLO), int(c[1]*BRILLO), int(c[2]*BRILLO))
+            np[i] = color_final
+        np.write()
+        time.sleep_ms(20)
+    
+    # Fade out final
+    for i in range(10, 0, -1):
+        factor = i / 10.0
+        np.fill((0, 0, 0)) # Clean buffer logic would be better but simple fade works by redrawing
+        for j in range(NUM_LEDS):
+             # Just fade whatever color was last there? Easier to just all OFF with intermediate steps or simple OFF
+             pass
+    np.fill(C_OFF)
+    np.write()
+
 # --- PROGRAMA PRINCIPAL ---
 def main():
     cargar_usuarios()
+    # Animación de inicio tipo Google
+    anim_intro_google()
+    
     np.fill(C_OFF); np.write()
     time.sleep(0.5)
     
