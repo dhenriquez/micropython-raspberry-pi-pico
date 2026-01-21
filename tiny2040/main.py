@@ -137,30 +137,34 @@ def anim_acceso_denegado():
 def anim_intro_google():
     colores_google = [C_G_AZUL, C_G_ROJO, C_G_AMARILLO, C_G_VERDE]
     start_t = time.ticks_ms()
+    
     # Ejecutar animacion por 3 segundos
     while time.ticks_diff(time.ticks_ms(), start_t) < 3000:
         np.fill(C_OFF)
-        # Rotar colores
-        offset = int(time.ticks_ms() / 150)
+        t = time.ticks_ms()
+        
+        # Rotacion con velocidad variable (Efecto "Ease-In-Out")
+        # Combinamos avance lineal con una onda seno para variar la velocidad
+        # (t / 60) da el avance base
+        # 6 * sin(t / 300) añade aceleracion y frenado ciclico
+        rotacion = (t / 60) + 6 * math.sin(t / 300.0)
+        offset = int(rotacion)
+        
         for i in range(NUM_LEDS):
             # Dividir anillo en 4 secciones
-            seccion = (i + offset) % NUM_LEDS
+            # Usamos RESTA en el offset para giro horario habitual en aros LED
+            seccion = (i - offset) % NUM_LEDS
             idx_color = (seccion * 4) // NUM_LEDS
+            
             # Asignar color correspondiente a la seccion
             c = colores_google[idx_color % 4]
             # Aplicar brillo
             color_final = (int(c[0]*BRILLO), int(c[1]*BRILLO), int(c[2]*BRILLO))
             np[i] = color_final
+            
         np.write()
-        time.sleep_ms(20)
+        time.sleep_ms(15)
     
-    # Fade out final
-    for i in range(10, 0, -1):
-        factor = i / 10.0
-        np.fill((0, 0, 0)) # Clean buffer logic would be better but simple fade works by redrawing
-        for j in range(NUM_LEDS):
-             # Just fade whatever color was last there? Easier to just all OFF with intermediate steps or simple OFF
-             pass
     np.fill(C_OFF)
     np.write()
 
