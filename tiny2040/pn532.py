@@ -126,7 +126,7 @@ class PN532:
         status = bytearray([0, 0])
         timestamp = time.ticks_ms()
         while time.ticks_diff(time.ticks_ms(), timestamp) < timeout:
-            time.sleep(0.02)   # required
+            time.sleep_ms(2)   # Reduced from 20ms
             self.CSB.off()
             time.sleep_ms(2)
             self._spi.write_readinto(status_query, status)
@@ -135,7 +135,7 @@ class PN532:
             if reverse_bit(status[1]) == 0x01:  # LSB data is read in MSB
                 return True      # Not busy anymore!
             else:
-                time.sleep(0.01)  # pause a bit till we ask again
+                time.sleep_ms(1)  # Reduced from 10ms
         # Timed out!
         return False
 
@@ -145,7 +145,7 @@ class PN532:
         frame = bytearray(count+1)
         # Add the SPI data read signal byte, but LSB'ify it
         frame[0] = reverse_bit(_SPI_DATAREAD)
-        time.sleep(0.02)   # required
+        time.sleep_ms(2)   # Reduced from 0.02
         self.CSB.off()
         time.sleep_ms(2)
         self._spi.write_readinto(frame, frame)
@@ -165,7 +165,7 @@ class PN532:
                      for x in bytes([_SPI_DATAWRITE]) + framebytes]
         if self.debug:
             print("DEBUG: _write_data: ", [hex(i) for i in rev_frame])
-        time.sleep(0.02)   # required
+        time.sleep_ms(2)   # Reduced from 0.02
         self.CSB.off()
         time.sleep_ms(2)
         self._spi.write(bytes(rev_frame))  # pylint: disable=no-member
