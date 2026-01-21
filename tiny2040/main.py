@@ -34,6 +34,7 @@ try:
     nfc = pn532.PN532(spi, cs_pin)
     ver = nfc.get_firmware_version()
     if ver:
+        nfc.SAM_configuration()
         print(f"Lector OK. Firmware: {hex(ver[0])} Rev {hex(ver[1])}")
     else:
         print("Lector responde STATUS pero no datos (revisa cables).")
