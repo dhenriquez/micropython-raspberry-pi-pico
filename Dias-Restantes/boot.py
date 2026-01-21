@@ -1389,217 +1389,389 @@ def actualizar_pantalla_simple():
                 mostrar_en_oled(['PASO HACE:', '', '{} DIAS'.format(abs(dias)), '', 'Fecha: {}'.format(fecha_objetivo)])
 
 def generar_html_base():
-    """Generar HTML base con estilos"""
-    return """<!DOCTYPE html><html>
-<head><meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>ESP32 Configurador</title>
+    """Generar HTML base con diseño moderno y Premium"""
+    return """<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>ESP32 Config</title>
 <style>
-body { font-family: Arial; margin: 20px; background: #f5f5f5; }
-.container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-.btn-primary { background: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; text-decoration: none; display: inline-block; margin: 5px; }
-.btn-secondary { background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; text-decoration: none; display: inline-block; margin: 5px; }
-.btn-danger { background: #f44336; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; text-decoration: none; display: inline-block; margin: 5px; }
-.success { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin: 10px 0; }
-.alert { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin: 10px 0; }
-.info { background: #d1ecf1; color: #0c5460; padding: 10px; border-radius: 5px; margin: 10px 0; }
-input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-.form-group { margin: 15px 0; }
-.radio-group { margin: 10px 0; }
-.radio-group label { display: block; margin: 5px 0; cursor: pointer; }
-.radio-group input[type="radio"] { margin-right: 8px; }
-.manual-input { display: none; margin-top: 10px; }
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 16px;
+    line-height: 1.5;
+}
+.container { max-width: 420px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 24px; padding-top: 10px; }
+.app-icon { font-size: 40px; margin-bottom: 10px; display: block; }
+.header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+    letter-spacing: -0.025em;
+}
+.subtitle { color: var(--text-muted); font-size: 0.875rem; margin-top: 4px; }
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+}
+.status-badge.ok { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.status-badge.warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.status-badge.err { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+/* Inputs */
+.form-group { margin-bottom: 20px; }
+label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
+input[type="text"], input[type="password"], input[type="date"], select {
+    width: 100%;
+    padding: 12px 16px;
+    background: #020617;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px; /* Evita zoom en iOS */
+    transition: all 0.2s;
+    outline: none;
+}
+input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+
+/* Buttons */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    margin-bottom: 12px;
+    gap: 8px;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { 
+    background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+.btn-secondary { background: #334155; color: white; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+.btn-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+/* WiFi Selector */
+.wifi-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+.wifi-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+.wifi-item:hover { background: rgba(255,255,255,0.05); }
+.wifi-item.selected { 
+    background: rgba(99, 102, 241, 0.15); 
+    border-color: var(--primary); 
+}
+.wifi-info { flex: 1; }
+.wifi-ssid { font-weight: 500; display: block; }
+.wifi-rssi { font-size: 0.75rem; color: var(--text-muted); }
+
+/* Signal Icons */
+.signal-icon { display: flex; align-items: flex-end; gap: 2px; height: 12px; margin-right: 12px; }
+.bar { width: 3px; background: #475569; border-radius: 1px; }
+.s-1 .b1 { background: var(--text-muted); }
+.s-2 .b1, .s-2 .b2 { background: var(--text-muted); }
+.s-3 .b1, .s-3 .b2, .s-3 .b3 { background: var(--success); }
+.s-4 .bar { background: var(--success); }
+
+/* Switches Radio */
+.radio-switch { display: flex; background: #020617; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+.radio-option { flex: 1; text-align: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+.radio-option.active { background: var(--card-bg); color: var(--text); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+input[type="radio"] { display: none; }
+
 </style>
 <script>
-function toggleSSIDInput() {
-    var radioButtons = document.getElementsByName('ssid_option');
-    var manualInput = document.getElementById('manual-ssid-group');
-    var selectInput = document.getElementById('ssid-select-group');
+function selectWifi(ssid, element) {
+    document.getElementById('ssid_input').value = ssid;
+    document.querySelectorAll('.wifi-item').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+    document.getElementById('password_input').focus();
     
-    for (var i = 0; i < radioButtons.length; i++) {
-        if (radioButtons[i].checked) {
-            if (radioButtons[i].value === 'manual') {
-                manualInput.style.display = 'block';
-                selectInput.style.display = 'none';
-            } else {
-                manualInput.style.display = 'none';
-                selectInput.style.display = 'block';
-            }
-            break;
-        }
-    }
+    // Ocultar manual si se selecciona lista
+    document.getElementById('manual_group').style.display = 'none';
+}
+function toggleManual() {
+    document.getElementById('manual_group').style.display = 'block';
+    document.getElementById('ssid_input').value = '';
+    document.getElementById('ssid_input').focus();
+    document.querySelectorAll('.wifi-item').forEach(el => el.classList.remove('selected'));
 }
 </script>
 </head>
-<body><div class='container'>"""
+<body>
+<div class="container">
+"""
 
 def pagina_principal():
-    """Página principal con opción de modo display"""
+    """Página principal con Dashboard"""
     html = generar_html_base()
-    html += "<h1>ESP32 Contador de Días</h1>"
-    html += "<div class='info'>📺 Pantalla: {}x{} píxeles</div>".format(SCREEN_WIDTH, SCREEN_HEIGHT)
     
-    if not wifi_configurado:
-        html += "<div class='alert'>⚠️ WiFi no configurado</div>"
-        html += "<p><a href='/wifi'><button class='btn-primary'>Configurar WiFi</button></a></p>"
-    else:
+    html += "<div class='header'><span class='app-icon'>📅</span><h1>Configurador</h1><div class='subtitle'>ESP32 Day Counter</div></div>"
+    
+    # Estado del Sistema
+    html += "<div class='card'>"
+    html += "<div class='card-title'>Estado del Sistema</div>"
+    
+    # WiFi Status
+    html += "<div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;'>"
+    html += "<span>WiFi</span>"
+    if wifi_configurado:
         wlan = network.WLAN(network.STA_IF)
-        html += "<div class='success'>✅ WiFi conectado: {}</div>".format(wlan.config('essid'))
-        html += "<div class='info'>IP: {}</div>".format(wlan.ifconfig()[0])
-
-        # AGREGAR INFORMACIÓN DEL HOSTNAME
+        ssid = wlan.config('essid')
+        ip = wlan.ifconfig()[0]
+        html += "<span class='status-badge ok'>Conectado</span></div>"
+        html += "<div style='font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;'>Red: <strong>{}</strong><br>IP: {}</div>".format(ssid, ip)
+        
+        # mDNS info
         if MDNS_AVAILABLE:
-            html += "<div class='info'>🌐 Acceso: <a href='http://{}.local' target='_blank'>{}.local</a></div>".format(HOSTNAME, HOSTNAME)
-        else:
-            html += "<div class='info'>ℹ️ mDNS no disponible - usar solo IP</div>"
-        
-        if not fecha_configurada:
-            html += "<div class='alert'>⚠️ Fecha no configurada</div>"
-        else:
-            html += "<div class='success'>✅ Fecha configurada: {}</div>".format(fecha_objetivo)
-            
-        # Mostrar modo de display actual
-        if modo_display == "solo_numero":
-            html += "<div class='info'>🔲 Modo: Solo Número</div>"
-        elif modo_display == "numeros_grandes":
-            html += "<div class='info'>🔢 Modo: Números Grandes</div>"
-        else:
-            html += "<div class='info'>📋 Modo: Vista Normal</div>"
-        
-        html += "<p><a href='/fecha'><button class='btn-primary'>Configurar Fecha</button></a></p>"
-        html += "<p><a href='/display'><button class='btn-secondary'>Cambiar Vista</button></a></p>"
-        html += "<p><a href='/reset'><button class='btn-danger'>Reset Completo</button></a></p>"
+            html += "<div style='background:rgba(99,102,241,0.1); padding:10px; border-radius:8px; font-size:0.85rem; color:#818cf8; text-align:center;'>Access: <a href='http://{}.local' style='color:inherit; font-weight:bold;'>{}.local</a></div>".format(HOSTNAME, HOSTNAME)
+    else:
+        html += "<span class='status-badge err'>Sin Conexión</span></div>"
+        html += "<div style='font-size:0.85rem; color:var(--text-muted);'>Conéctate para sincronizar fecha y hora.</div>"
+    html += "</div>" # End Card
+    
+    # Fecha Status
+    html += "<div class='card'>"
+    html += "<div class='card-title'>Evento Objetivo</div>"
+    if fecha_configurada:
+        dias = calcular_dias_restantes()
+        texto_dias = "Calculando..." if dias is None else "{} Días".format(dias)
+        html += "<div style='text-align:center; padding:10px;'>"
+        html += "<div style='font-size:2rem; font-weight:700; color:var(--primary);'>{}</div>".format(texto_dias)
+        html += "<div style='font-size:0.9rem; color:var(--text-muted);'>{}</div>".format(fecha_objetivo)
+        html += "</div>"
+    else:
+        html += "<div style='text-align:center; padding:15px; border:2px dashed var(--border); border-radius:12px; color:var(--text-muted);'>"
+        html += "No hay fecha configurada</div>"
+    html += "</div>" # End Card
+    
+    # Acciones
+    html += "<div style='display:grid; gap:10px;'>"
+    html += "<a href='/wifi' class='btn btn-primary'>📡 Configurar WiFi</a>"
+    html += "<a href='/fecha' class='btn btn-secondary'>📅 Configurar Fecha</a>"
+    html += "<a href='/display' class='btn btn-secondary'>📺 Personalizar Display</a>"
+    
+    html += "<form action='/reset' method='GET' onsubmit='return confirm(\"¿Resetear de fábrica?\");' style='margin-top:20px;'>"
+    html += "<button type='submit' class='btn btn-danger'>⚠️ Resetear Fábrica</button></form>"
+    html += "</div>"
     
     html += "</div></body></html>"
     return html
 
 def pagina_display():
-    """Página configuración de modo de visualización"""
-    if not wifi_configurado:
-        return "HTTP/1.1 400 Bad Request\r\n\r\nConfigura WiFi primero"
-    
+    """Página Display Mejorada"""
     html = generar_html_base()
-    html += "<h1>Configurar Visualización</h1>"
-    html += "<div class='info'>📺 Pantalla: {}x{} píxeles</div>".format(SCREEN_WIDTH, SCREEN_HEIGHT)
+    html += "<div class='header'><h1>Personalizar</h1><div class='subtitle'>Opciones de Visualización</div></div>"
     
-    # Mostrar modo actual
-    modo_actual = "Vista Normal"
-    if modo_display == "numeros_grandes":
-        modo_actual = "Números Grandes"
-    elif modo_display == "solo_numero":
-        modo_actual = "Solo Número"
+    # Preview de Pantalla (Simulada CSS)
+    html += "<div class='card' style='text-align:center;'>"
+    html += "<div class='card-title' style='justify-content:center;'>Vista Previa ({}x{}px)</div>".format(SCREEN_WIDTH, SCREEN_HEIGHT)
     
-    html += "<div class='info'>Modo actual: <strong>{}</strong></div>".format(modo_actual)
+    # Simular OLED con aspect ratio correcto
+    aspect_ratio = SCREEN_WIDTH / SCREEN_HEIGHT
+    html += "<div style='background:black; width:100%; max-width:200px; aspect-ratio:{}; margin:0 auto; border-radius:4px; border:2px solid #333; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;'>".format(aspect_ratio)
+    
+    # Contenido simulado según modo
+    if modo_display == "solo_numero":
+        html += "<span style='color:cyan; font-family:monospace; font-size:40px; line-height:1;'>123</span>"
+    elif modo_display == "numeros_grandes":
+        html += "<div style='color:white; font-family:monospace; font-size:10px; display:flex; flex-direction:column; align-items:center; gap:2px;'><span>FALTAN</span><span style='font-size:24px; color:cyan;'>123</span><span>DIAS</span></div>"
+    else:
+        html += "<div style='color:white; font-family:monospace; font-size:8px; width:100%; padding:4px; text-align:left;'>FALTAN:<br>123 DIAS<br><br>Fecha: 2025...</div>"
+    
+    html += "</div>"
+    html += "</div>"
     
     html += "<form action='/setdisplay' method='POST'>"
+    html += "<div class='card'>"
+    html += "<div class='card-title'>Estilo de Pantalla</div>"
     
-    html += "<div class='form-group'>"
-    html += "<div class='radio-group'>"
+    # Opciones como lista seleccionable
+    options = [
+        ('normal', 'Vista Normal', 'Texto detallado con scroll'),
+        ('numeros_grandes', 'Números Grandes', 'Énfasis en los días restantes'),
+        ('solo_numero', 'Solo Número', 'Máxima visibilidad del contador')
+    ]
     
-    checked_normal = "checked" if modo_display == "normal" else ""
-    checked_grandes = "checked" if modo_display == "numeros_grandes" else ""
-    checked_solo = "checked" if modo_display == "solo_numero" else ""
-    
-    html += "<label><input type='radio' name='modo' value='normal' {}> Vista Normal</label>".format(checked_normal)
-    html += "<small style='color: #666; margin-left: 20px;'>Muestra información detallada con texto</small><br><br>"
-    
-    html += "<label><input type='radio' name='modo' value='numeros_grandes' {}> Números Grandes</label>".format(checked_grandes)
-    html += "<small style='color: #666; margin-left: 20px;'>Muestra los días con números grandes y texto mínimo</small><br><br>"
-    
-    html += "<label><input type='radio' name='modo' value='solo_numero' {}> Solo Número</label>".format(checked_solo)
-    html += "<small style='color: #666; margin-left: 20px;'>Muestra únicamente el número ocupando toda la pantalla</small>"
+    for val, label, desc in options:
+        checked = "checked" if modo_display == val else ""
+        selected_cls = "selected" if modo_display == val else ""
+        html += "<label class='wifi-item {}' onclick='document.querySelectorAll(\".wifi-item\").forEach(e=>e.classList.remove(\"selected\")); this.classList.add(\"selected\");'>".format(selected_cls)
+        html += "<input type='radio' name='modo' value='{}' {} style='display:block; width:auto; margin-right:10px;'>".format(val, checked)
+        html += "<div class='wifi-info'><span class='wifi-ssid'>{}</span>".format(label)
+        html += "<span class='wifi-rssi'>{}</span></div>".format(desc)
+        html += "</label>"
     
     html += "</div>"
-    html += "</div>"
     
-    html += "<input type='submit' value='Aplicar Cambios' class='btn-primary'>"
+    html += "<button type='submit' class='btn btn-primary'>💾 Guardar Cambios</button>"
     html += "</form>"
-    
-    html += "<br><a href='/'><button class='btn-secondary'>Volver</button></a>"
+    html += "<a href='/' class='btn btn-outline'>Cancelar</a>"
     html += "</div></body></html>"
-    
     return html
 
-def detener_mdns():
-    """Detener servicio mDNS"""
-    if MDNS_AVAILABLE:
-        try:
-            mdns.stop()
-            print("mDNS detenido")
-        except:
-            pass
-
 def pagina_wifi():
-    """Página configuración WiFi mejorada"""
+    """Página WiFi Modernizada com Selector Visual"""
     html = generar_html_base()
-    html += "<h1>Configurar WiFi</h1>"
+    html += "<div class='header'><h1>Conexión WiFi</h1><div class='subtitle'>Selecciona una red</div></div>"
     
     redes = escanear_redes()
     
-    html += "<form action='/setwifi' method='POST'>"
+    html += "<form action='/setwifi' method='POST' id='wifi-form'>"
+    html += "<input type='hidden' name='ssid_option' value='select'>" # Default to select
     
-    # Opciones de selección
-    html += "<div class='form-group'>"
-    html += "<div class='radio-group'>"
-    html += "<label><input type='radio' name='ssid_option' value='select' checked onclick='toggleSSIDInput()'>Seleccionar de la lista</label>"
-    html += "<label><input type='radio' name='ssid_option' value='manual' onclick='toggleSSIDInput()'>Escribir manualmente</label>"
-    html += "</div>"
-    html += "</div>"
+    # Lista de Redes
+    html += "<div class='card'>"
+    html += "<div class='card-title'>Redes Disponibles</div>"
+    html += "<div class='wifi-list'>"
     
-    # Selector de redes escaneadas
-    html += "<div id='ssid-select-group' class='form-group'>"
-    html += "<label>Redes WiFi disponibles:</label>"
-    html += "<select name='ssid_select'>"
-    
-    for ssid, rssi in redes:
-        # Escapar caracteres especiales en el SSID para HTML
-        ssid_escaped = ssid.replace("'", "&#39;").replace('"', "&quot;")
-        html += "<option value='{}'>{} ({} dBm)</option>".format(ssid_escaped, ssid_escaped, rssi)
-    
-    html += "</select>"
-    html += "</div>"
-    
-    # Input manual para SSID
-    html += "<div id='manual-ssid-group' class='form-group manual-input'>"
-    html += "<label>Nombre de la red (SSID):</label>"
-    html += "<input type='text' name='ssid_manual' placeholder='Escribe el nombre de la red WiFi'>"
-    html += "<small style='color: #666;'>Útil para redes ocultas o que no aparecen en la lista</small>"
-    html += "</div>"
-    
-    # Campo de contraseña
-    html += "<div class='form-group'>"
-    html += "<label>Contraseña:</label>"
-    html += "<input type='password' name='password' required placeholder='Contraseña de la red WiFi'>"
+    if redes:
+        # Ordenar por señal (RSSI)
+        redes.sort(key=lambda x: x[1], reverse=True)
+        
+        for ssid, rssi in redes:
+            ssid_safe = ssid.replace("'", "&#39;")
+            
+            # Calcular barras de señal
+            bars_class = "s-1"
+            if rssi > -50: bars_class = "s-4"
+            elif rssi > -70: bars_class = "s-3"
+            elif rssi > -80: bars_class = "s-2"
+            
+            html += "<div class='wifi-item' onclick='selectWifi(\"{}\", this)'>".format(ssid_safe)
+            html += "<div class='signal-icon {}'><div class='bar b1'></div><div class='bar b2'></div><div class='bar b3'></div><div class='bar b4'></div></div>".format(bars_class)
+            html += "<div class='wifi-info'><span class='wifi-ssid'>{}</span><span class='wifi-rssi'>{} dBm</span></div>".format(ssid, rssi)
+            # Icono candado
+            html += "<span style='font-size:12px; color:var(--text-muted);'>🔒</span>"
+            html += "</div>"
+    else:
+        html += "<div style='text-align:center; padding:20px; color:var(--text-muted);'>No se encontraron redes.<br><small>Intenta de nuevo o ingresa manual.</small></div>"
+
+    html += "<div style='text-align:center; margin-top:12px;'>"
+    html += "<button type='button' class='btn-outline' style='width:auto; display:inline-block; padding:8px 16px; font-size:0.8rem;' onclick='toggleManual()'>➕ Agregar Manualmente</button>"
     html += "</div>"
     
-    html += "<input type='submit' value='Conectar WiFi' class='btn-primary'>"
+    html += "</div>" # End Card lista
+    
+    # Credenciales Input
+    html += "<div class='card' style='background:#162032;'>"
+    
+    # Input Manual (Oculto por defecto)
+    html += "<div id='manual_group' style='display:none; margin-bottom:15px;'>"
+    html += "<label>Nombre de Red (SSID)</label>"
+    html += "<input type='text' name='ssid_manual' id='ssid_input' placeholder='Escribe el nombre...'>"
+    html += "</div>"
+    
+    # Input Oculto para selección de lista
+    html += "<input type='hidden' name='ssid_select' id='ssid_input_hidden'>" # Compatibilidad con logica anterior
+    
+    html += "<label>Contraseña</label>"
+    html += "<div style='position:relative;'>"
+    html += "<input type='password' name='password' id='password_input' placeholder='Ingresa la contraseña' required>"
+    # Ojo toggle
+    html += "<span onclick='var x=document.getElementById(\"password_input\"); x.type = x.type==\"password\"?\"text\":\"password\";' style='position:absolute; right:12px; top:12px; cursor:pointer; opacity:0.6;'>👁️</span>"
+    html += "</div>"
+    
+    # Hack para unificar inputs en el submit
+    html += "<script>document.getElementById('wifi-form').onsubmit = function() { var manual = document.getElementById('ssid_input').value; if(manual) { document.querySelector('input[name=\"ssid_option\"]').value='manual'; document.querySelector('input[name=\"ssid_manual\"]').value=manual; } else { return false; } };</script>"
+    
+    html += "</div>"
+    
+    html += "<button type='submit' class='btn btn-primary'>Conectar</button>"
     html += "</form>"
-    
-    html += "<br><a href='/'><button class='btn-secondary'>Volver</button></a>"
+    html += "<a href='/' class='btn btn-outline'>Cancelar</a>"
     html += "</div></body></html>"
-    
     return html
 
 def pagina_fecha():
-    """Página configuración fecha"""
-    if not wifi_configurado:
-        return "HTTP/1.1 400 Bad Request\r\n\r\nConfigura WiFi primero"
-    
+    """Página de Configuración de Fecha"""
     html = generar_html_base()
-    html += "<h1>Configurar Fecha Objetivo</h1>"
-    
-    if fecha_configurada:
-        html += "<div class='success'>Fecha actual: {}</div>".format(fecha_objetivo)
+    html += "<div class='header'><h1>Fecha Objetivo</h1><div class='subtitle'>¿Cuándo es el evento?</div></div>"
     
     html += "<form action='/setfecha' method='POST'>"
-    html += "<label>Fecha objetivo:</label><br>"
-    html += "<input type='date' name='fecha' required><br><br>"
-    html += "<input type='submit' value='Configurar Fecha' class='btn-primary'>"
+    html += "<div class='card'>"
+    
+    if fecha_configurada:
+         html += "<div style='background:rgba(16,185,129,0.1); border-radius:8px; padding:12px; margin-bottom:20px; font-size:0.9rem; display:flex; align-items:center; gap:10px;'><span style='color:#34d399;'>✅</span> <span>Configurado actualmente: <strong>{}</strong></span></div>".format(fecha_objetivo)
+    
+    html += "<div class='form-group'>"
+    html += "<label>Selecciona la nueva fecha</label>"
+    html += "<input type='date' name='fecha' required style='font-size:1.2rem; text-align:center; letter-spacing:2px;'>"
+    html += "</div>"
+    
+    html += "<div style='font-size:0.8rem; color:var(--text-muted); text-align:center;'>El contador calculará los días restantes automáticamente desde hoy.</div>"
+    
+    html += "</div>"
+    
+    html += "<button type='submit' class='btn btn-primary'>Establecer Fecha</button>"
     html += "</form>"
-    
-    html += "<br><a href='/'><button class='btn-secondary'>Volver</button></a>"
+    html += "<a href='/' class='btn btn-outline'>Cancelar</a>"
     html += "</div></body></html>"
-    
     return html
 
 def parsear_form_data(data):
