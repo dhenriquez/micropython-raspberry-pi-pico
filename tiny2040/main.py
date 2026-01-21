@@ -145,8 +145,7 @@ def main():
         if nfc: 
             try:
                 uid = nfc.read_passive_target(timeout=100) 
-            except Exception as e:
-                print(f"Error Loop: {e}")
+            except Exception:
                 pass 
 
         if uid:

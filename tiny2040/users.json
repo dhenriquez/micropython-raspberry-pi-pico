@@ -1,14 +1,38 @@
 [
   {
-    "user": "Mickey Mouse",
+    "user": "Chip and Dale",
     "uid": "0x04484afa471190",
     "usertype": "vip",
     "status": "habilitado"
   },
   {
-    "user": "Donald Duck",
-    "uid": "0x080ffcb7",
+    "user": "Gravity Falls",
+    "uid": "0x046c656a466480",
+    "usertype": "normal",
+    "status": "habilitado"
+  },
+  {
+    "user": "Stitch",
+    "uid": "0x044f840a836880",
+    "usertype": "normal",
+    "status": "habilitado"
+  },
+  {
+    "user": "Tag Azul",
+    "uid": "0x635b32f5",
     "usertype": "normal",
     "status": "denegado"
-  }
+  },
+  {
+    "user": "Tarjeta",
+    "uid": "0x238a7dfd",
+    "usertype": "normal",
+    "status": "habilitado"
+  },
+  {
+    "user": "Pixel 6a",
+    "uid": "0x08297861",
+    "usertype": "normal",
+    "status": "habilitado"
+  },
 ]
