@@ -299,6 +299,16 @@ class PN532:
         # check the command was executed as expected.
         self.call_function(_COMMAND_SAMCONFIGURATION,
                            params=[0x01, 0x14, 0x01])
+                           
+        # --- AUMENTO DE POTENCIA ---
+        # Command RFConfiguration (0x32)
+        # Item 5: MaxRetries (0xFF = ilimitado, 0x01 = por defecto)
+        # Intentamos configurar MaxRetries para mejorar lectura
+        # params: [0x05, 0xFF, 0x01] -> ConfigItem, MxRtyATR, MxRtyPSL
+        try:
+             self.call_function(0x32, params=[0x05, 0xFF, 0x01])
+        except:
+             pass
 
     def read_passive_target(self, card_baud=_MIFARE_ISO14443A, timeout=1000):
         """Wait for a MiFare card to be available and return its UID when found.
